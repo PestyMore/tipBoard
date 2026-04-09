@@ -1,0 +1,30 @@
+[
+  {
+    "id": "d4496557-d413-452d-a0db-e365301122fa",
+    "name": "的过分",
+    "items": []
+  },
+  {
+    "id": "f3245d7e-7c29-4efc-bc0f-2e5bb213ed16",
+    "name": "淡粉",
+    "items": []
+  },
+  {
+    "id": "part-1",
+    "name": "Git 常用命令",
+    "items": [
+      {
+        "id": "item-2",
+        "tip": "git push origin main",
+        "hint": "将本地主分支推送到远程仓库",
+        "is_folded": false
+      },
+      {
+        "id": "item-1",
+        "tip": "git commit -m \"msg\"",
+        "hint": "提交暂存区的内容，并添加备注说明",
+        "is_folded": true
+      }
+    ]
+  }
+]
