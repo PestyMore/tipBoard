@@ -23,5 +23,5 @@ fn main() -> Result<(), eframe::Error> {
             .with_inner_size([config::WINDOW_WIDTH, config::WINDOW_HEIGHT]),
         ..Default::default()
     };
-    eframe::run_native("tipBoard", options, Box::new(|cc| Box::new(TipBoardApp::new(cc))))
+    eframe::run_native("tipBoard", options, Box::new(|cc| Ok(Box::new(TipBoardApp::new(cc)))))
 }

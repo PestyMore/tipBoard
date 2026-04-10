@@ -21,7 +21,7 @@ impl TipBoardApp {
         egui_extras::install_image_loaders(&cc.egui_ctx);
         let mut fonts = egui::FontDefinitions::default();
         if let Ok(font_data) = std::fs::read("C:\\Windows\\Fonts\\msyh.ttc").or_else(|_| std::fs::read("C:\\Windows\\Fonts\\simsun.ttc")) {
-            fonts.font_data.insert("my_font".to_owned(), egui::FontData::from_owned(font_data).into());
+            fonts.font_data.insert("my_font".to_owned(), egui::FontData::from_owned(font_data));
             fonts.families.get_mut(&egui::FontFamily::Proportional).unwrap().insert(0, "my_font".to_owned());
             fonts.families.get_mut(&egui::FontFamily::Monospace).unwrap().insert(0, "my_font".to_owned());
         }
@@ -70,9 +70,9 @@ impl TipBoardApp {
         if response.drag_started() { ctx.send_viewport_cmd(egui::ViewportCommand::StartDrag); }
         
         ui.painter().line_segment([rect.left_bottom(), rect.right_bottom()], egui::Stroke::new(1.0, egui::Color32::from_black_alpha(10)));
-        ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, "tipBoard v1.0.0", egui::FontId::proportional(FONT_SIZE_BODY), egui::Color32::from_rgb(130, 130, 130));
+        ui.painter().text(rect.center(), egui::Align2::CENTER_CENTER, "tipBoard v1.0.1", egui::FontId::proportional(FONT_SIZE_BODY), egui::Color32::from_rgb(130, 130, 130));
 
-        ui.allocate_ui_at_rect(rect, |ui| {
+        ui.allocate_new_ui(egui::UiBuilder::new().max_rect(rect), |ui| {
             ui.with_layout(egui::Layout::left_to_right(egui::Align::Center), |ui| {
                 ui.add_space(15.0);
                 let btn_size = egui::vec2(WINDOW_CTRL_BTN_SIZE, WINDOW_CTRL_BTN_SIZE);
@@ -99,11 +99,11 @@ impl TipBoardApp {
             });
         });
 
-        ui.allocate_ui_at_rect(rect, |ui| {
+        ui.allocate_new_ui(egui::UiBuilder::new().max_rect(rect), |ui| {
             ui.with_layout(egui::Layout::right_to_left(egui::Align::Center), |ui| {
                 ui.add_space(15.0);
                 
-                let (mode_uri, mode_img) = if self.mode == Mode::Read { ("bytes://pencil.png", ui::IMG_PENCIL) } else { ("bytes://book.png", ui::IMG_BOOK) };
+                let (mode_uri, mode_img) = if self.mode == Mode::Read { ("bytes://book.png", ui::IMG_BOOK) } else { ("bytes://pencil.png", ui::IMG_PENCIL) };
                 if ui::icon_btn(ui, mode_uri, mode_img, ICON_MODE_SWITCH).clicked() {
                     self.mode = if self.mode == Mode::Read { Mode::Edit } else { Mode::Read };
                     self.edit_target = None; 
@@ -210,7 +210,7 @@ impl TipBoardApp {
                         ui.add_space(5.0);
                         
                         if current_edit.as_deref() == Some(&part.id) {
-                            let res = ui.add(egui::TextEdit::singleline(&mut part.name).desired_width(INPUT_WIDTH_PART).margin(egui::vec2(8.0, 4.0)));
+                            let res = ui.add(egui::TextEdit::singleline(&mut part.name).id_source(&part.id).desired_width(INPUT_WIDTH_PART).margin(egui::vec2(8.0, 4.0)));
                             if self.focus_requested_id.as_deref() == Some(&part.id) {
                                 res.request_focus();
                                 self.focus_requested_id = None;
@@ -274,13 +274,13 @@ impl TipBoardApp {
 
                                 ui.vertical(|ui| {
                                     if current_edit.as_deref() == Some(&item.id) {
-                                        let res1 = ui.add(egui::TextEdit::singleline(&mut item.tip).hint_text("输入 Tip").desired_width(INPUT_WIDTH_ITEM).margin(egui::vec2(6.0, 4.0)));
+                                        let res1 = ui.add(egui::TextEdit::singleline(&mut item.tip).id_source(format!("{}_tip", item.id)).hint_text("输入 Tip").desired_width(INPUT_WIDTH_ITEM).margin(egui::vec2(6.0, 4.0)));
                                         if self.focus_requested_id.as_deref() == Some(&item.id) {
                                             res1.request_focus();
                                             self.focus_requested_id = None;
                                         }
                                         ui.add_space(2.0);
-                                        ui.add(egui::TextEdit::singleline(&mut item.hint).hint_text("输入提示说明").desired_width(INPUT_WIDTH_ITEM).margin(egui::vec2(6.0, 4.0)));
+                                        ui.add(egui::TextEdit::singleline(&mut item.hint).id_source(format!("{}_hint", item.id)).hint_text("输入提示说明").desired_width(INPUT_WIDTH_ITEM).margin(egui::vec2(6.0, 4.0)));
                                         
                                         if ui.input(|i| i.key_pressed(egui::Key::Enter)) { current_edit = None; changed = true; }
                                     } else {
